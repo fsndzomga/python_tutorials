@@ -1,6 +1,16 @@
+from langchain.agents import load_tools
+from langchain.agents import initialize_agent
 from langchain.llms import OpenAI
 
-llm = OpenAI(temperature=0.9)
+# First, let's load the language model we're going to use to control the agent.
+llm = OpenAI(temperature=0)
 
-text = "What would be a good company name for a company that makes colorful socks?"
-print(llm(text))
+# Next, let's load some tools to use. Note that the `llm-math` tool uses an LLM, so we need to pass that in.
+tools = load_tools(["serpapi", "llm-math"], llm=llm)
+
+
+# Finally, let's initialize an agent with the tools, the language model, and the type of agent we want to use.
+agent = initialize_agent(tools, llm, agent="zero-shot-react-description", verbose=True)
+
+# Now let's test it out!
+agent.run("Qui est le fondateur de Dikalo? qui est le fondateur de kiroo games?")
